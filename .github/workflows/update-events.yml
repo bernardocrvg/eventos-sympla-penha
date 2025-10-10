@@ -85,13 +85,36 @@ jobs:
         
         python << 'EOF'
         import json
-        from datetime import datetime
-        
+
         # Carrega dados dos eventos
         with open('events-data.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
-        
-        # Template HTML principal
+
+        # Script de auto-resize (envia a altura pro Wix via postMessage)
+        auto_resize_script = """
+        <script>
+        (function(){
+          function sendHeight(){
+            try{
+              var h = Math.max(
+                document.documentElement.scrollHeight || 0,
+                document.body.scrollHeight || 0
+              );
+              parent.postMessage({ type: 'sympla-resize', height: h }, '*');
+            }catch(e){}
+          }
+          window.addEventListener('load', sendHeight);
+          window.addEventListener('resize', sendHeight);
+          var obs = new MutationObserver(function(){ sendHeight(); });
+          obs.observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+          setInterval(sendHeight, 1500);
+        })();
+        </script>
+        """
+        # Escapa chaves para não conflitar com f-string
+        auto_resize_script = auto_resize_script.replace("{", "{{").replace("}", "}}")
+
+        # HTML principal (mantém seu design e injeta o script)
         main_template = f"""<!DOCTYPE html>
         <html lang="pt-BR">
         <head>
@@ -160,19 +183,44 @@ jobs:
                     <p>📊 Total de eventos: {data['total_events']}</p>
                 </div>
             </div>
+            {auto_resize_script}
         </body>
         </html>"""
-        
-        # Salva index.html principal
+
+        # Páginas separadas com auto-resize
+        penha_page = f"""<!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Igreja da Penha - Eventos</title>
+        </head>
+        <body>
+            {data['html_penha']}
+            {auto_resize_script}
+        </body>
+        </html>"""
+
+        outras_page = f"""<!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Outras Igrejas - Eventos</title>
+        </head>
+        <body>
+            {data['html_outras']}
+            {auto_resize_script}
+        </body>
+        </html>"""
+
+        # Salva arquivos
         with open('index.html', 'w', encoding='utf-8') as f:
             f.write(main_template)
-        
-        # Salva arquivos separados
         with open('penha.html', 'w', encoding='utf-8') as f:
-            f.write(data['html_penha'])
-            
+            f.write(penha_page)
         with open('outras.html', 'w', encoding='utf-8') as f:
-            f.write(data['html_outras'])
+            f.write(outras_page)
         
         # Salva JSON público para uso via JavaScript
         public_data = {
@@ -188,7 +236,7 @@ jobs:
         with open('events.json', 'w', encoding='utf-8') as f:
             json.dump(public_data, f, indent=2, ensure_ascii=False)
         
-        print("✅ Arquivos HTML gerados com sucesso")
+        print("✅ Arquivos HTML gerados com sucesso (com auto-resize)")
         EOF
         
     - name: 📋 Generate README
@@ -269,17 +317,6 @@ jobs:
         git commit -m "🔄 Atualização automática dos eventos - $(date '+%d/%m/%Y %H:%M UTC')"
         git push
         echo "✅ Eventos atualizados e publicados no GitHub Pages"
-        
-        # Mostra resumo
-        echo "📊 Resumo da atualização:"
-        python -c "
-        import json
-        with open('events-data.json') as f:
-            data = json.load(f)
-        print(f'• Total: {data[\"total_events\"]} eventos')
-        print(f'• Igreja da Penha: {data[\"penha_events_count\"]} eventos')  
-        print(f'• Outras Igrejas: {data[\"outras_events_count\"]} eventos')
-        "
         
     - name: 📝 Create deployment summary
       if: steps.changes.outputs.changes == 'true'
