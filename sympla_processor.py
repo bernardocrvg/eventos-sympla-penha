@@ -194,104 +194,106 @@ class SymplaProcessor:
         return processed_events
     
     def generate_html(self, penha_events: List[Dict], outras_events: List[Dict]) -> tuple:
-        """Gera HTML estático e dinâmico com design aplicado"""
+        """Gera HTML estático e dinâmico com design responsivo limpo"""
         
-        # CSS comum com design final
+        # CSS: fontes fluidas, grid flex, sem cortes no mobile, título maior que botões
         common_css = '''
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap');
-        
+
         .event-container { 
             font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             width: 100%;
-            max-width: none;
-            margin: 0;
-            padding: 0;
+            margin: 0 auto;
+            padding: 12px;
+            max-width: 1200px;
             background: transparent;
-            min-height: auto;
             box-sizing: border-box;
             text-align: center;
         }
-        
+
         .month-section { 
-            margin-bottom: 25px; 
+            margin: 20px auto 26px auto;
             background: transparent;
-            padding: 15px 10px;
+            padding: 6px 8px;
         }
-        
+
         .month-section h2 { 
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
             color: #003448;
-            margin-bottom: 15px;
-            font-size: 30px;
+            margin: 0 0 14px 0;
+            /* 24px em telas pequenas → 34px em desktop */
+            font-size: clamp(24px, 4vw, 34px);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-align: center;
-            padding: 0;
         }
-        
+
+        /* Grade dos botões */
+        .event-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 12px;
+        }
+
         .event-button {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
             color: #003448;
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 16px;
+            /* 15px em telas pequenas → 18px em desktop */
+            font-size: clamp(15px, 2.4vw, 18px);
             padding: 12px 20px;
-            margin: 6px 8px 6px 0;
             text-decoration: none;
-            border-radius: 25px;
+            border-radius: 26px;
             border: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-            line-height: 1.2;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.06);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+            line-height: 1.25;
+            white-space: normal;          /* permite quebrar a linha se precisar */
+            overflow-wrap: anywhere;      /* evita cortar texto */
+            box-sizing: border-box;
+            max-width: 100%;
         }
-        
+
         .event-button:hover {
             background: linear-gradient(145deg, #a2d2ff 0%, #7cc7ff 100%);
             color: #003448;
             text-decoration: none;
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1);
         }
-        
+
         .update-info {
-            margin-top: 20px; 
-            padding: 10px 15px; 
-            background: rgba(248, 249, 250, 0.8);
-            border-radius: 15px; 
-            text-align: center; 
-            color: #6b7280; 
-            font-size: 11px;
+            margin: 18px auto 10px auto;
+            padding: 10px 14px;
+            background: rgba(248, 249, 250, 0.85);
+            border-radius: 14px;
+            text-align: center;
+            color: #6b7280;
+            font-size: clamp(11px, 1.6vw, 12px);
             font-family: 'Montserrat', sans-serif;
             font-weight: 400;
             border: 1px solid rgba(226, 232, 240, 0.5);
+            max-width: 980px;
         }
-        
-        @media (max-width: 768px) {
+
+        /* Mobile: abaixo de 785px os botões ocupam 100% da largura e ficam um por linha */
+        @media (max-width: 785px) {
+            .event-container { padding-left: 14px; padding-right: 14px; }
+            .event-grid { gap: 8px; }
             .event-button {
                 display: block;
-                width: calc(100% - 16px);
-                margin: 6px 8px;
-                text-align: center;
+                width: 100%;
+                padding: 12px 18px;
             }
             .month-section h2 {
-                font-size: 16px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .event-button {
-                width: calc(100% - 8px);
-                margin: 4px 4px;
-                padding: 10px 15px;
-                font-size: 13px;
-            }
-            .month-section h2 {
-                font-size: 15px;
+                /* garante título visualmente maior que os botões no mobile */
+                font-size: clamp(26px, 5.2vw, 32px);
             }
         }
         '''
@@ -315,27 +317,29 @@ class SymplaProcessor:
             return by_month
         
         def generate_buttons_html(events_by_month):
-            """Gera HTML dos botões organizados por mês"""
+            """Gera HTML dos botões organizados por mês (em grade flex responsiva)"""
             if not events_by_month:
-                return '<div style="text-align: center; padding: 40px; color: #666;"><p>Nenhum evento disponível no momento.</p></div>'
+                return '<div style="text-align:center; padding:40px; color:#666;"><p>Nenhum evento disponível no momento.</p></div>'
             
             html = ''
-            # Ordena meses cronologicamente
-            sorted_months = sorted(events_by_month.keys(), key=lambda x: (
-                int(x.split('/')[1]),  # ano
-                list(events_by_month.keys()).index(x) if x in events_by_month else 999  # mês
-            ))
+            # Ordena meses por ano (crescente) e ordem de aparição
+            sorted_months = sorted(
+                events_by_month.keys(),
+                key=lambda x: (int(x.split('/')[1]), list(events_by_month.keys()).index(x))
+            )
             
             for month_year in sorted_months:
-                html += f'<div class="month-section">'
+                html += '<div class="month-section">'
                 html += f'<h2>{month_year.upper()}</h2>'
+                html += '<div class="event-grid">'
                 
-                # Ordena eventos por data dentro do mês
-                sorted_events = sorted(events_by_month[month_year], 
-                                     key=lambda x: datetime.fromisoformat(x['full_date_time']))
+                # Ordena eventos por data
+                sorted_events = sorted(
+                    events_by_month[month_year],
+                    key=lambda x: datetime.fromisoformat(x["full_date_time"])
+                )
                 
                 for event in sorted_events:
-                    # Mapeia dia da semana
                     day_names = {
                         "Dom": "DOMINGO", "Seg": "SEGUNDA-FEIRA", "Ter": "TERÇA-FEIRA",
                         "Qua": "QUARTA-FEIRA", "Qui": "QUINTA-FEIRA", "Sex": "SEXTA-FEIRA",
@@ -345,7 +349,8 @@ class SymplaProcessor:
                     button_text = f'{event["date"]} ({day_name})'
                     html += f'<a href="{event["sympla_url"]}" target="_blank" class="event-button">{button_text}</a>'
                 
-                html += '</div>'
+                html += '</div>'  # .event-grid
+                html += '</div>'  # .month-section
             
             return html
         
