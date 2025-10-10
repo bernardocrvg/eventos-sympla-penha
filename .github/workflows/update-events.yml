@@ -79,117 +79,116 @@ jobs:
         print(f'• Última atualização: {data[\"generated_at\"]}')
         "
         
-    - name: 📄 Generate HTML files
-      run: |
-        echo "📝 Gerando arquivos HTML..."
-        
-        python << 'EOF'
-        import json
-        from datetime import datetime
-        
-        # Carrega dados dos eventos
-        with open('events-data.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        
-        # Template HTML principal
-        main_template = f"""<!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Eventos Sympla - Igreja da Penha</title>
-            <meta name="description" content="Curso Online de Pais e Padrinhos - Igreja da Penha">
-            <style>
-                body {{
-                    margin: 0;
-                    padding: 0;
-                    background: transparent;
-                    font-family: 'Montserrat', sans-serif;
-                }}
-                .container {{
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    padding: 20px;
-                    text-align: center;
-                }}
-                .event-section {{
-                    margin-bottom: 40px;
-                    background: transparent;
-                }}
-                .section-title {{
-                    font-family: 'Montserrat', sans-serif;
-                    font-weight: 900;
-                    color: #003448;
-                    font-size: 24px;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    margin-bottom: 30px;
-                    text-align: center;
-                }}
-                .info {{
-                    text-align: center;
-                    padding: 20px;
-                    background: rgba(248, 249, 250, 0.8);
-                    border-radius: 15px;
-                    color: #6b7280;
-                    font-size: 12px;
-                    font-family: 'Montserrat', sans-serif;
-                    margin-top: 30px;
-                }}
-                @media (max-width: 768px) {{
-                    .container {{ padding: 10px; }}
-                    .section-title {{ font-size: 20px; }}
-                }}
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="event-section">
-                    <h2 class="section-title">🏛️ Igreja da Penha</h2>
-                    {data['html_penha']}
-                </div>
-                
-                <div class="event-section">
-                    <h2 class="section-title">⛪ Outras Igrejas</h2>
-                    {data['html_outras']}
-                </div>
-                
-                <div class="info">
-                    <p>📡 Atualizado automaticamente via GitHub Actions</p>
-                    <p>🔄 Última atualização: {data['generated_at']}</p>
-                    <p>📊 Total de eventos: {data['total_events']}</p>
-                </div>
-            </div>
-        </body>
-        </html>"""
-        
-        # Salva index.html principal
-        with open('index.html', 'w', encoding='utf-8') as f:
-            f.write(main_template)
-        
-        # Salva arquivos separados
-        with open('penha.html', 'w', encoding='utf-8') as f:
-            f.write(data['html_penha'])
-            
-        with open('outras.html', 'w', encoding='utf-8') as f:
-            f.write(data['html_outras'])
-        
-        # Salva JSON público para uso via JavaScript
-        public_data = {{
-            'penha_events_count': data['penha_events_count'],
-            'outras_events_count': data['outras_events_count'],
-            'total_events': data['total_events'],
-            'last_update': data['last_update'],
-            'generated_at': data['generated_at'],
-            'html_penha': data['html_penha'],
-            'html_outras': data['html_outras']
-        }}
-        
-        with open('events.json', 'w', encoding='utf-8') as f:
-            json.dump(public_data, f, indent=2, ensure_ascii=False)
-        
-        print("✅ Arquivos HTML gerados com sucesso")
-        EOF
+          - name: 📝 Generate HTML files
+        run: |
+          echo "📝 Gerando arquivos HTML..."
+          python - << 'PY'
+import json
+from datetime import datetime
+
+# Carrega dados
+with open('events-data.json','r',encoding='utf-8') as f:
+    data = json.load(f)
+
+# Template principal ({{ e }} só dentro do f-string do HTML/CSS)
+main_template = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eventos Sympla - Igreja da Penha</title>
+  <meta name="description" content="Curso Online de Pais e Padrinhos - Igreja da Penha">
+  <style>
+    body {{
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Montserrat', sans-serif;
+    }}
+    .container {{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }}
+    .event-section {{
+      margin-bottom: 40px;
+      background: transparent;
+    }}
+    .section-title {{
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      color: #003448;
+      font-size: 24px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      text-align: center;
+    }}
+    .info {{
+      text-align: center;
+      padding: 20px;
+      background: rgba(248, 249, 250, 0.8);
+      border-radius: 15px;
+      color: #6b7280;
+      font-size: 12px;
+      font-family: 'Montserrat', sans-serif;
+      margin-top: 30px;
+    }}
+    @media (max-width: 768px) {{
+      .container {{ padding: 10px; }}
+      .section-title {{ font-size: 20px; }}
+    }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="event-section">
+      <h2 class="section-title">🏛️ Igreja da Penha</h2>
+      {data['html_penha']}
+    </div>
+
+    <div class="event-section">
+      <h2 class="section-title">⛪ Outras Igrejas</h2>
+      {data['html_outras']}
+    </div>
+
+    <div class="info">
+      <p>📡 Atualizado automaticamente via GitHub Actions</p>
+      <p>🔄 Última atualização: {data['generated_at']}</p>
+      <p>📊 Total de eventos: {data['total_events']}</p>
+    </div>
+  </div>
+</body>
+</html>"""
+
+# Grava arquivos
+with open('index.html','w',encoding='utf-8') as f:
+    f.write(main_template)
+
+with open('penha.html','w',encoding='utf-8') as f:
+    f.write(data['html_penha'])
+
+with open('outras.html','w',encoding='utf-8') as f:
+    f.write(data['html_outras'])
+
+# AQUI é Python normal: use { ... } (UMA chave), não {{
+public_data = {
+    'penha_events_count': data['penha_events_count'],
+    'outras_events_count': data['outras_events_count'],
+    'total_events': data['total_events'],
+    'last_update': data['last_update'],
+    'generated_at': data['generated_at'],
+    'html_penha': data['html_penha'],
+    'html_outras': data['html_outras'],
+}
+
+with open('events.json','w',encoding='utf-8') as f:
+    json.dump(public_data, f, indent=2, ensure_ascii=False)
+
+print("✅ Arquivos HTML gerados com sucesso")
+PY
+
         
     - name: 📋 Generate README
       run: |
