@@ -1,19 +1,14 @@
 name: 🔄 Atualizar Eventos Sympla
 
 on:
-  # Executa manualmente
   workflow_dispatch:
     inputs:
       force_update:
         description: 'Forçar atualização mesmo sem mudanças'
         required: false
         default: 'false'
-
-  # Executa automaticamente a cada 6 horas
   schedule:
-    - cron: '0 */6 * * *'  # 00:00, 06:00, 12:00, 18:00 UTC
-
-  # Executa quando há push na branch main (opcional)
+    - cron: '0 */6 * * *'
   push:
     branches: [ main ]
     paths:
@@ -50,8 +45,7 @@ jobs:
         run: |
           if [ -z "$SYMPLA_API_KEY" ]; then
             echo "❌ SYMPLA_API_KEY não configurada!"
-            echo "👉 Vá em Settings > Secrets > Actions"
-            echo "👉 Adicione SYMPLA_API_KEY com sua chave da API Sympla"
+            echo "👉 Vá em Settings > Secrets > Actions e adicione SYMPLA_API_KEY"
             exit 1
           fi
           echo "✅ SYMPLA_API_KEY encontrada"
@@ -63,15 +57,12 @@ jobs:
           echo "🚀 Iniciando busca de eventos..."
           python sympla_processor.py
 
-          # Verifica se o arquivo foi gerado
           if [ ! -f events-data.json ]; then
             echo "❌ Falha ao gerar events-data.json"
             exit 1
           fi
 
           echo "✅ Eventos processados com sucesso"
-
-          # Mostra estatísticas
           echo "📊 Estatísticas dos eventos:"
           python - << 'PY'
 import json
@@ -94,7 +85,7 @@ from datetime import datetime
 with open('events-data.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
-# Template HTML principal (use {{ }} apenas dentro do f-string do HTML/CSS)
+# Template HTML principal ({{ }} só dentro do f-string do HTML/CSS)
 main_template = f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -177,8 +168,7 @@ with open('penha.html', 'w', encoding='utf-8') as f:
 with open('outras.html', 'w', encoding='utf-8') as f:
     f.write(data['html_outras'])
 
-# Salva JSON público para uso via JavaScript
-# ⚠️ Aqui é Python "normal": use { ... } (UMA chave), não {{ ... }}
+# Salva JSON público para uso via JavaScript (UMA chave!)
 public_data = {
     'penha_events_count': data['penha_events_count'],
     'outras_events_count': data['outras_events_count'],
@@ -250,14 +240,10 @@ PY
       - name: 🔍 Check for changes
         id: changes
         run: |
-          # Configura git
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-
-          # Adiciona arquivos ao staging
           git add index.html penha.html outras.html events.json README.md events-data.json || true
 
-          # Verifica se há mudanças
           if git diff --cached --quiet && [ "${{ github.event.inputs.force_update }}" != "true" ]; then
             echo "changes=false" >> $GITHUB_OUTPUT
             echo "ℹ️ Nenhuma mudança detectada nos eventos"
@@ -272,33 +258,3 @@ PY
           git commit -m "🔄 Atualização automática dos eventos - $(date '+%d/%m/%Y %H:%M UTC')"
           git push
           echo "✅ Eventos atualizados e publicados no GitHub Pages"
-
-          # Mostra resumo
-          echo "📊 Resumo da atualização:"
-          python - << 'PY'
-import json
-with open('events-data.json','r',encoding='utf-8') as f:
-    data = json.load(f)
-print(f'• Total: {data.get("total_events")} eventos')
-print(f'• Igreja da Penha: {data.get("penha_events_count")} eventos')
-print(f'• Outras Igrejas: {data.get("outras_events_count")} eventos')
-PY
-
-      - name: 📝 Create deployment summary
-        if: steps.changes.outputs.changes == 'true'
-        run: |
-          echo "## 🎉 Eventos Atualizados com Sucesso" >> $GITHUB_STEP_SUMMARY
-          python - << 'PY' >> $GITHUB_STEP_SUMMARY
-import json
-with open('events-data.json','r',encoding='utf-8') as f:
-    data = json.load(f)
-print(f'**📊 Total de eventos**: {data.get("total_events")}')
-print(f'**🏛️ Igreja da Penha**: {data.get("penha_events_count")} eventos')
-print(f'**⛪ Outras Igrejas**: {data.get("outras_events_count")} eventos')
-print(f'**🕒 Atualização**: {data.get("generated_at")}')
-print('')
-print('**🔗 URLs disponíveis:**')
-print(f"- Página Principal: https://{ "${{ github.repository_owner }}" }.github.io/{ "${{ github.event.repository.name }}" }/")
-print(f"- Igreja da Penha: https://{ "${{ github.repository_owner }}" }.github.io/{ "${{ github.event.repository.name }}" }/penha.html")
-print(f"- Outras Igrejas: https://{ "${{ github.repository_owner }}" }.github.io/{ "${{ github.event.repository.name }}" }/outras.html")
-PY
