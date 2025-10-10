@@ -223,7 +223,7 @@ class SymplaProcessor:
             font-weight: 900;
             color: #003448;
             margin-bottom: 15px;
-            font-size: 18px;
+            font-size: 30px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-align: center;
@@ -236,7 +236,7 @@ class SymplaProcessor:
             color: #003448;
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 16px;
             padding: 12px 20px;
             margin: 6px 8px 6px 0;
             text-decoration: none;
