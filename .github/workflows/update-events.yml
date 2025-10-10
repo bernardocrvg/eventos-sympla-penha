@@ -175,7 +175,7 @@ jobs:
             f.write(data['html_outras'])
         
         # Salva JSON público para uso via JavaScript
-        public_data = {{
+        public_data = {
             'penha_events_count': data['penha_events_count'],
             'outras_events_count': data['outras_events_count'],
             'total_events': data['total_events'],
@@ -183,7 +183,7 @@ jobs:
             'generated_at': data['generated_at'],
             'html_penha': data['html_penha'],
             'html_outras': data['html_outras']
-        }}
+        }
         
         with open('events.json', 'w', encoding='utf-8') as f:
             json.dump(public_data, f, indent=2, ensure_ascii=False)
