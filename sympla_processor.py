@@ -438,4 +438,29 @@ def main():
         exit(1)
 
 if __name__ == "__main__":
-    main()
+    processor = SymplaProcessor()
+    events = processor.fetch_all_events()
+    if not events:
+        print("❌ Nenhum evento encontrado.")
+        exit(1)
+    
+    # Separa Penha e Outras
+    penha = [e for e in events if e["event_type"] == "penha"]
+    outras = [e for e in events if e["event_type"] == "outras"]
+    
+    html_penha, html_outras, data_summary = processor.generate_output_files(penha, outras)
+    
+    data = {
+        "html_penha": html_penha,
+        "html_outras": html_outras,
+        "penha_events_count": len(penha),
+        "outras_events_count": len(outras),
+        "total_events": len(events),
+        "generated_at": datetime.utcnow().isoformat(),
+        "last_update": datetime.utcnow().isoformat()
+    }
+    
+    with open("events-data.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+    
+    print("✅ Arquivo events-data.json gerado com sucesso!")
