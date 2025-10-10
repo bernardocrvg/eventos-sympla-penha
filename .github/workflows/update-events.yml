@@ -71,13 +71,19 @@ jobs:
         
         echo "✅ Eventos processados com sucesso"
         
-        # Mostra estatísticas (sem heredoc, para evitar erro de YAML)
+    - name: 📊 Print stats (safe)
+      run: |
         echo "📊 Estatísticas dos eventos:"
-        python -c "import json,sys; d=json.load(open('events-data.json','r',encoding='utf-8')); \
-print(f'• Total: {d.get(\"total_events\")} eventos'); \
-print(f'• Igreja da Penha: {d.get(\"penha_events_count\")} eventos'); \
-print(f'• Outras Igrejas: {d.get(\"outras_events_count\")} eventos'); \
-print(f'• Última atualização: {d.get(\"generated_at\")}')"
+        cat > print_stats.py << 'PY'
+import json
+with open('events-data.json','r',encoding='utf-8') as f:
+    data = json.load(f)
+print(f'• Total: {data.get("total_events")} eventos')
+print(f'• Igreja da Penha: {data.get("penha_events_count")} eventos')
+print(f'• Outras Igrejas: {data.get("outras_events_count")} eventos')
+print(f'• Última atualização: {data.get("generated_at")}')
+PY
+        python print_stats.py
         
     - name: 📄 Generate HTML files
       run: |
@@ -114,7 +120,7 @@ print(f'• Última atualização: {d.get(\"generated_at\")}')"
                 }}
                 .event-section {{
                     margin-bottom: 40px;
-                    background: transparent.
+                    background: transparent;
                 }}
                 .section-title {{
                     font-family: 'Montserrat', sans-serif;
