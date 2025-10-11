@@ -152,7 +152,7 @@ class SymplaProcessor:
         return processed_events
     
     def generate_html(self, penha_events: List[Dict], outras_events: List[Dict]) -> tuple:
-        """Gera HTML com Wix Madefor (título 30px 800; botão 16px 800)"""
+        """Gera HTML com Wix Madefor (desktop e mobile < 802px)"""
         common_css = '''
         @import url('https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700;800&family=Wix+Madefor+Text:wght@400;500;600;700;800&display=swap');
 
@@ -176,11 +176,11 @@ class SymplaProcessor:
             align-items: center;
         }
 
-        /* TÍTULO mês/ano → 30px, ExtraBold (800), centralizado */
+        /* TÍTULO mês/ano → 30px, ExtraBold (800), centralizado (desktop) */
         .month-section h2 { 
             font-family: 'Wix Madefor Display', 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
             font-weight: 800;
-            font-size: 30px;              /* tamanho fixo conforme pedido */
+            font-size: 30px;              /* desktop */
             color: #003448;
             margin: 0 0 14px 0;
             width: 100%;
@@ -189,7 +189,6 @@ class SymplaProcessor:
             letter-spacing: 0.5px;
         }
 
-        /* Grid dos botões */
         .event-grid {
             display: flex;
             flex-wrap: wrap;
@@ -207,7 +206,7 @@ class SymplaProcessor:
             color: #003448;
             font-family: 'Wix Madefor Display', 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
             font-weight: 800;              /* ExtraBold */
-            font-size: 16px;               /* tamanho fixo conforme pedido */
+            font-size: 16px;               /* fixo */
             padding: 12px 20px;
             text-decoration: none;
             border-radius: 26px;
@@ -243,11 +242,15 @@ class SymplaProcessor:
             max-width: 980px;
         }
 
-        /* Mobile: layout de coluna, sem alterar tamanhos de fonte */
-        @media (max-width: 785px) {
+        /* MOBILE: abaixo de 802px
+           - Título = 24pt (≈ 32px), ExtraBold
+           - Botão mantém 16px, ocupa a largura inteira para não quebrar feio
+        */
+        @media (max-width: 802px) {
             .event-container { padding-left: 14px; padding-right: 14px; }
             .event-grid { gap: 8px; }
-            .event-button { display: block; width: 100%; padding: 12px 18px; }
+            .month-section h2 { font-size: 24pt; }    /* pedido: 24pt no mobile */
+            .event-button { display: block; width: 100%; padding: 12px 18px; font-size: 16px; }
         }
         '''
         def organize_by_month(events):
