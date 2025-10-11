@@ -176,7 +176,7 @@ class SymplaProcessor:
             align-items: center;
         }
 
-        /* TÍTULO mês/ano → 30px, ExtraBold (800), centralizado (desktop) */
+        /* TÍTULO mês/ano → 30px (desktop), ExtraBold (800) */
         .month-section h2 { 
             font-family: 'Wix Madefor Display', 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
             font-weight: 800;
@@ -243,13 +243,13 @@ class SymplaProcessor:
         }
 
         /* MOBILE: abaixo de 802px
-           - Título = 24pt (≈ 32px), ExtraBold
+           - Título = 24px (menor que 30px), ExtraBold
            - Botão mantém 16px, ocupa a largura inteira para não quebrar feio
         */
         @media (max-width: 802px) {
             .event-container { padding-left: 14px; padding-right: 14px; }
             .event-grid { gap: 8px; }
-            .month-section h2 { font-size: 24pt; }    /* pedido: 24pt no mobile */
+            .month-section h2 { font-size: 24px; }    /* ajustado para px */
             .event-button { display: block; width: 100%; padding: 12px 18px; font-size: 16px; }
         }
         '''
