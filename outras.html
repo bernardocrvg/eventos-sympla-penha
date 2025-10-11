@@ -9,10 +9,10 @@
     
         <div class="event-container">
             <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700;800&family=Wix+Madefor+Text:wght@400;500;600;700;800&display=swap');
 
         .event-container { 
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
             width: 100%;
             margin: 0 auto;
             padding: 12px;
@@ -26,38 +26,43 @@
             margin: 20px auto 26px auto;
             background: transparent;
             padding: 6px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
+        /* TÍTULO mês/ano → 30px, ExtraBold (800), centralizado */
         .month-section h2 { 
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
+            font-family: 'Wix Madefor Display', 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            font-weight: 800;
+            font-size: 30px;              /* tamanho fixo conforme pedido */
             color: #003448;
             margin: 0 0 14px 0;
-            /* 24px em telas pequenas → 34px em desktop */
-            font-size: clamp(24px, 4vw, 34px);
+            width: 100%;
+            text-align: center;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            text-align: center;
         }
 
-        /* Grade dos botões */
+        /* Grid dos botões */
         .event-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 10px 12px;
+            width: 100%;
         }
 
+        /* BOTÃO → 16px, ExtraBold (800) */
         .event-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
             color: #003448;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            /* 15px em telas pequenas → 18px em desktop */
-            font-size: clamp(15px, 2.4vw, 18px);
+            font-family: 'Wix Madefor Display', 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            font-weight: 800;              /* ExtraBold */
+            font-size: 16px;               /* tamanho fixo conforme pedido */
             padding: 12px 20px;
             text-decoration: none;
             border-radius: 26px;
@@ -65,8 +70,8 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.06);
             transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
             line-height: 1.25;
-            white-space: normal;          /* permite quebrar a linha se precisar */
-            overflow-wrap: anywhere;      /* evita cortar texto */
+            white-space: normal;
+            overflow-wrap: anywhere;
             box-sizing: border-box;
             max-width: 100%;
         }
@@ -86,32 +91,22 @@
             border-radius: 14px;
             text-align: center;
             color: #6b7280;
-            font-size: clamp(11px, 1.6vw, 12px);
-            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-family: 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
             font-weight: 400;
             border: 1px solid rgba(226, 232, 240, 0.5);
             max-width: 980px;
         }
 
-        /* Mobile: abaixo de 785px os botões ocupam 100% da largura e ficam um por linha */
+        /* Mobile: layout de coluna, sem alterar tamanhos de fonte */
         @media (max-width: 785px) {
             .event-container { padding-left: 14px; padding-right: 14px; }
             .event-grid { gap: 8px; }
-            .event-button {
-                display: block;
-                width: 100%;
-                padding: 12px 18px;
-            }
-            .month-section h2 {
-                /* garante título visualmente maior que os botões no mobile */
-                font-size: clamp(26px, 5.2vw, 32px);
-            }
+            .event-button { display: block; width: 100%; padding: 12px 18px; }
         }
         </style>
             <div class="month-section"><h2>OUTUBRO/2025</h2><div class="event-grid"><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-11-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/2968793" target="_blank" class="event-button">11/10/2025 (SÁBADO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-13-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/3145905" target="_blank" class="event-button">13/10/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-16-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/3139514" target="_blank" class="event-button">16/10/2025 (QUINTA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-18-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/2968801" target="_blank" class="event-button">18/10/2025 (SÁBADO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-20-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/3145909" target="_blank" class="event-button">20/10/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-23-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/3139519" target="_blank" class="event-button">23/10/2025 (QUINTA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-25-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/2968805" target="_blank" class="event-button">25/10/2025 (SÁBADO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-27-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/3145916" target="_blank" class="event-button">27/10/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-30-10-2025-para-quem-realizar-o-batizado-fora-da-basilica/3139527" target="_blank" class="event-button">30/10/2025 (QUINTA-FEIRA)</a></div></div><div class="month-section"><h2>NOVEMBRO/2025</h2><div class="event-grid"><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-02-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969157" target="_blank" class="event-button">02/11/2025 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-03-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2970139" target="_blank" class="event-button">03/11/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-09-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969168" target="_blank" class="event-button">09/11/2025 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-10-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2970142" target="_blank" class="event-button">10/11/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-16-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969173" target="_blank" class="event-button">16/11/2025 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-17-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2970143" target="_blank" class="event-button">17/11/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-23-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969190" target="_blank" class="event-button">23/11/2025 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-24-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2970146" target="_blank" class="event-button">24/11/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-30-11-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969231" target="_blank" class="event-button">30/11/2025 (DOMINGO)</a></div></div><div class="month-section"><h2>DEZEMBRO/2025</h2><div class="event-grid"><a href="https://www.sympla.com.br/evento/curso-de-noivos-epvm-encontros-06-e-07-12-2025/3131592" target="_blank" class="event-button">06/12/2025 (SÁBADO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-07-12-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969243" target="_blank" class="event-button">07/12/2025 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-08-12-2025-para-quem-realizar-o-batizado-fora-da-basilica/2970148" target="_blank" class="event-button">08/12/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-14-12-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969249" target="_blank" class="event-button">14/12/2025 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-15-12-2025-para-quem-realizar-o-batizado-fora-da-basilica/2970153" target="_blank" class="event-button">15/12/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-21-12-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969412" target="_blank" class="event-button">21/12/2025 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-22-12-2025-para-quem-realizar-o-batizado-fora-da-basilica/2970155" target="_blank" class="event-button">22/12/2025 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-28-12-2025-para-quem-realizar-o-batizado-fora-da-basilica/2969445" target="_blank" class="event-button">28/12/2025 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-29-12-2025-para-quem-realizar-o-batizado-fora-da-basilica/2970157" target="_blank" class="event-button">29/12/2025 (SEGUNDA-FEIRA)</a></div></div><div class="month-section"><h2>JANEIRO/2026</h2><div class="event-grid"><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-25-01-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977448" target="_blank" class="event-button">25/01/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-26-01-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978099" target="_blank" class="event-button">26/01/2026 (SEGUNDA-FEIRA)</a></div></div><div class="month-section"><h2>FEVEREIRO/2026</h2><div class="event-grid"><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-01-02-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977457" target="_blank" class="event-button">01/02/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-02-02-2026-para-quem-realizar-o-batizado-fora-da-basi-copia/2978104" target="_blank" class="event-button">02/02/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-08-02-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977463" target="_blank" class="event-button">08/02/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-09-02-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978108" target="_blank" class="event-button">09/02/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-22-02-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977466" target="_blank" class="event-button">22/02/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-23-02-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978113" target="_blank" class="event-button">23/02/2026 (SEGUNDA-FEIRA)</a></div></div><div class="month-section"><h2>MARÇO/2026</h2><div class="event-grid"><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-01-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977473" target="_blank" class="event-button">01/03/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-02-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978116" target="_blank" class="event-button">02/03/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-08-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977476" target="_blank" class="event-button">08/03/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-09-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978143" target="_blank" class="event-button">09/03/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-15-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977516" target="_blank" class="event-button">15/03/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-16-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978146" target="_blank" class="event-button">16/03/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-22-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977518" target="_blank" class="event-button">22/03/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-23-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978148" target="_blank" class="event-button">23/03/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-29-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977523" target="_blank" class="event-button">29/03/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-30-03-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978152" target="_blank" class="event-button">30/03/2026 (SEGUNDA-FEIRA)</a></div></div><div class="month-section"><h2>ABRIL/2026</h2><div class="event-grid"><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-05-04-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977525" target="_blank" class="event-button">05/04/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-06-04-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978156" target="_blank" class="event-button">06/04/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-12-04-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977528" target="_blank" class="event-button">12/04/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-13-04-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978158" target="_blank" class="event-button">13/04/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-19-04-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977532" target="_blank" class="event-button">19/04/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-20-04-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978161" target="_blank" class="event-button">20/04/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-26-04-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977534" target="_blank" class="event-button">26/04/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-27-04-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978164" target="_blank" class="event-button">27/04/2026 (SEGUNDA-FEIRA)</a></div></div><div class="month-section"><h2>MAIO/2026</h2><div class="event-grid"><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-03-05-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977538" target="_blank" class="event-button">03/05/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-04-05-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978167" target="_blank" class="event-button">04/05/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-11-05-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978174" target="_blank" class="event-button">11/05/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-17-05-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977548" target="_blank" class="event-button">17/05/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-24-05-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977551" target="_blank" class="event-button">24/05/2026 (DOMINGO)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-25-05-2026-para-quem-realizar-o-batizado-fora-da-basilica/2978180" target="_blank" class="event-button">25/05/2026 (SEGUNDA-FEIRA)</a><a href="https://www.sympla.com.br/evento-online/curso-online-de-pais-e-padrinhos-31-05-2026-para-quem-realizar-o-batizado-fora-da-basilica/2977556" target="_blank" class="event-button">31/05/2026 (DOMINGO)</a></div></div>
-            <div class="update-info">
-                Última atualização: 10/10/2025 às 23:44 UTC
-            </div>
+            <div class="update-info">Última atualização: 10/10/2025 às 21:02 (Horário de Brasília)</div>
         </div>
         
     
