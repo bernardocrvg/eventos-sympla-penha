@@ -102,34 +102,40 @@ class SymplaProcessor:
                 if not title:
                     continue
                 
-                # ===== FILTRO CORRIGIDO - APENAS "Curso Online de Pais e Padrinhos" =====
+                # ===== FILTRO PARA 3 TIPOS: Pais/Padrinhos e Noivos =====
                 title_lower = title.lower()
                 
-                # Verifica se é especificamente o curso de pais e padrinhos
-                valid_patterns = [
+                # Detecta cursos de noivos
+                noivos_patterns = [
+                    'curso de noivos',
+                    'curso para noivos',
+                    'curso online de noivos',
+                    'noivos'
+                ]
+                
+                # Detecta cursos de pais e padrinhos
+                pais_patterns = [
                     'curso online de pais e padrinhos',
                     'curso de pais e padrinhos',
                     'pais e padrinhos'
                 ]
                 
-                # Deve conter pelo menos um dos padrões específicos
-                if not any(pattern in title_lower for pattern in valid_patterns):
-                    print(f"❌ Rejeitado (não é curso de pais): {title[:50]}...")
+                # Classifica o tipo de curso
+                is_noivos = any(pattern in title_lower for pattern in noivos_patterns)
+                is_pais = any(pattern in title_lower for pattern in pais_patterns)
+                
+                if not is_noivos and not is_pais:
+                    print(f"❌ Rejeitado (não é curso reconhecido): {title[:50]}...")
                     continue
                 
-                # Exclui explicitamente cursos de noivos
-                excluded_patterns = [
-                    'curso de noivos',
-                    'curso para noivos',
-                    'noivos'
-                ]
-                
-                if any(pattern in title_lower for pattern in excluded_patterns):
-                    print(f"❌ Rejeitado (curso de noivos): {title[:50]}...")
-                    continue
-                
-                print(f"✅ Aceito: {title[:50]}...")
-                # ===== FIM DO FILTRO CORRIGIDO =====
+                if is_noivos:
+                    print(f"💒 Aceito (curso de noivos): {title[:50]}...")
+                    course_type = "noivos"
+                else:
+                    print(f"👶 Aceito (curso de pais): {title[:50]}...")
+                    course_type = "pais"
+                    
+                # ===== FIM DO FILTRO PARA 3 TIPOS =====
                 
                 # Extrai data do evento
                 event_date = None
@@ -187,13 +193,18 @@ class SymplaProcessor:
                 day_of_week = day_mapping.get(weekday, 'Dom')
                 
                 # Determina tipo do evento e horário
-                if ("na basílica" in title_lower or "na basilica" in title_lower):
+                if course_type == "noivos":
+                    event_type = "noivos"
+                    # Cursos de noivos geralmente são sábados às 14:00
+                    time_str = "14:00"
+                elif ("na basílica" in title_lower or "na basilica" in title_lower):
                     event_type = "penha"
                     time_str = "15:00" if day_of_week == 'Dom' else "11:00"
                 elif ("fora da basílica" in title_lower or "fora da basilica" in title_lower):
                     event_type = "outras"
                     time_str = "14:00" if day_of_week == 'Dom' else "11:00"
                 else:
+                    # Para cursos de pais sem especificação, assume "outras"
                     event_type = "outras"
                     time_str = "14:00" if day_of_week == 'Dom' else "11:00"
                 
@@ -219,7 +230,7 @@ class SymplaProcessor:
         
         return processed_events
     
-    def generate_html(self, penha_events: List[Dict], outras_events: List[Dict]) -> tuple:
+    def generate_html(self, penha_events: List[Dict], outras_events: List[Dict], noivos_events: List[Dict]) -> tuple:
         """Gera HTML estático e dinâmico com design aplicado"""
         
         # CSS comum com design final
@@ -378,6 +389,7 @@ class SymplaProcessor:
         # Organiza eventos por mês
         penha_by_month = organize_by_month(penha_events)
         outras_by_month = organize_by_month(outras_events)
+        noivos_by_month = organize_by_month(noivos_events)
         
         # Gera HTML para Igreja da Penha
         penha_buttons = generate_buttons_html(penha_by_month)
@@ -403,7 +415,19 @@ class SymplaProcessor:
         </div>
         '''
         
-        return html_penha, html_outras
+        # Gera HTML para Cursos de Noivos
+        noivos_buttons = generate_buttons_html(noivos_by_month)
+        html_noivos = f'''
+        <div class="event-container">
+            <style>{common_css}</style>
+            {noivos_buttons}
+            <div class="update-info">
+                Última atualização: {datetime.now().strftime('%d/%m/%Y às %H:%M')} UTC
+            </div>
+        </div>
+        '''
+        
+        return html_penha, html_outras, html_noivos
     
     def process_all_events(self):
         """Processo completo: busca eventos e gera HTML"""
@@ -419,21 +443,26 @@ class SymplaProcessor:
         # Separa por categoria
         penha_events = [e for e in all_events if e['event_type'] == 'penha']
         outras_events = [e for e in all_events if e['event_type'] == 'outras']
+        noivos_events = [e for e in all_events if e['event_type'] == 'noivos']
         
         print(f"📊 Igreja da Penha: {len(penha_events)} eventos")
         print(f"📊 Outras Igrejas: {len(outras_events)} eventos")
+        print(f"💒 Cursos de Noivos: {len(noivos_events)} eventos")
         
         # Gera HTML
-        html_penha, html_outras = self.generate_html(penha_events, outras_events)
+        html_penha, html_outras, html_noivos = self.generate_html(penha_events, outras_events, noivos_events)
         
         # Dados finais
         result = {
             'penha_events': penha_events,
             'outras_events': outras_events,
+            'noivos_events': noivos_events,
             'html_penha': html_penha,
             'html_outras': html_outras,
+            'html_noivos': html_noivos,
             'penha_events_count': len(penha_events),
             'outras_events_count': len(outras_events),
+            'noivos_events_count': len(noivos_events),
             'total_events': len(all_events),
             'last_update': datetime.utcnow().isoformat(),
             'generated_at': datetime.utcnow().strftime('%d/%m/%Y às %H:%M UTC')
