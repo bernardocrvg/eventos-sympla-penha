@@ -1,301 +1,328 @@
-name: "🔄 Atualizar Eventos Sympla"
+name: 🔄 Atualizar Eventos Sympla (3 Tipos)
 
 on:
   # Executa manualmente
   workflow_dispatch:
     inputs:
       force_update:
-        description: "Forçar atualização mesmo sem mudanças"
+        description: 'Forçar atualização mesmo sem mudanças'
         required: false
-        default: "false"
-
+        default: 'false'
+  
   # Executa automaticamente a cada 6 horas
   schedule:
-    - cron: "0 */6 * * *"  # 00:00, 06:00, 12:00, 18:00 UTC
-
+    - cron: '0 */6 * * *'  # 00:00, 06:00, 12:00, 18:00 UTC
+    
   # Executa quando há push na branch main (opcional)
   push:
     branches: [ main ]
-    paths:
-      - "sympla_processor.py"
-      - ".github/workflows/update-events.yml"
+    paths: 
+      - 'sympla_processor.py'
+      - '.github/workflows/update-events.yml'
 
 jobs:
   update-events:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write  # necessário para dar git push
-
+    
     steps:
-      - name: "📥 Checkout repository"
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "🐍 Setup Python"
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: "📦 Install dependencies"
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-
-      - name: "🔑 Verify Sympla API Key"
-        env:
-          SYMPLA_API_KEY: ${{ secrets.SYMPLA_API_KEY }}
-        run: |
-          if [ -z "$SYMPLA_API_KEY" ]; then
-            echo "❌ SYMPLA_API_KEY não configurada!"
-            echo "👉 Vá em Settings > Secrets and variables > Actions"
-            echo "👉 Adicione SYMPLA_API_KEY com sua chave da API Sympla"
-            exit 1
-          fi
-          echo "✅ SYMPLA_API_KEY encontrada"
-
-      - name: "📡 Fetch events from Sympla API"
-        env:
-          SYMPLA_API_KEY: ${{ secrets.SYMPLA_API_KEY }}
-        run: |
-          echo "🚀 Iniciando busca de eventos..."
-          python sympla_processor.py
-
-          # Verifica se o arquivo foi gerado
-          if [ ! -f events-data.json ]; then
-            echo "❌ Falha ao gerar events-data.json"
-            exit 1
-          fi
-
-          echo "✅ Eventos processados com sucesso"
-
-          # Mostra estatísticas
-          echo "📊 Estatísticas dos eventos:"
-          python - << 'PY'
-          import json
-          with open('events-data.json', encoding='utf-8') as f:
-              data = json.load(f)
-          print(f"• Total: {data['total_events']} eventos")
-          print(f"• Igreja da Penha: {data['penha_events_count']} eventos")
-          print(f"• Outras Igrejas: {data['outras_events_count']} eventos")
-          print(f"• Última atualização: {data['generated_at']}")
-          PY
-
-      - name: "📄 Generate HTML files"
-        run: |
-          echo "📝 Gerando arquivos HTML..."
-
-          python << 'EOF'
-          import json
-
-          # Carrega dados dos eventos (já em horário de Brasília, vindo do processor)
-          with open('events-data.json', 'r', encoding='utf-8') as f:
-              data = json.load(f)
-
-          # Template HTML principal (usa Wix Madefor)
-          main_template = f"""<!DOCTYPE html>
-          <html lang="pt-BR">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Eventos Sympla - Igreja da Penha</title>
-              <meta name="description" content="Curso Online de Pais e Padrinhos - Igreja da Penha">
-              <link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700;800&family=Wix+Madefor+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-              <style>
-                  body {{
-                      margin: 0;
-                      padding: 0;
-                      background: transparent;
-                      font-family: 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
-                  }}
-                  .container {{
-                      max-width: 1200px;
-                      margin: 0 auto;
-                      padding: 20px;
-                      text-align: center;
-                  }}
-                  .event-section {{
-                      margin-bottom: 40px;
-                      background: transparent;
-                  }}
-                  .section-title {{
-                      font-family: 'Wix Madefor Display', 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
-                      font-weight: 800;
-                      color: #003448;
-                      font-size: 26px;
-                      text-transform: uppercase;
-                      letter-spacing: 1px;
-                      margin-bottom: 30px;
-                      text-align: center;
-                  }}
-                  .info {{
-                      text-align: center;
-                      padding: 20px;
-                      background: rgba(248, 249, 250, 0.8);
-                      border-radius: 15px;
-                      color: #6b7280;
-                      font-size: 12px;
-                      font-family: 'Wix Madefor Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
-                      margin-top: 30px;
-                  }}
-              </style>
-          </head>
-          <body>
-              <div class="container">
-                  <div class="event-section">
-                      <h2 class="section-title">🏛️ Igreja da Penha</h2>
-                      {data['html_penha']}
-                  </div>
-
-                  <div class="event-section">
-                      <h2 class="section-title">⛪ Outras Igrejas</h2>
-                      {data['html_outras']}
-                  </div>
-
-                  <div class="info">
-                      <p>📡 Atualizado automaticamente via GitHub Actions</p>
-                      <p>🔄 Última atualização: {data['generated_at']}</p>
-                      <p>📊 Total de eventos: {data['total_events']}</p>
-                  </div>
-              </div>
-          </body>
-          </html>"""
-
-          # Salva index.html principal
-          with open('index.html', 'w', encoding='utf-8') as f:
-              f.write(main_template)
-
-          # Salva arquivos separados (os HTMLs já incluem CSS embutido pelo processor)
-          with open('penha.html', 'w', encoding='utf-8') as f:
-              f.write(data['html_penha'])
-
-          with open('outras.html', 'w', encoding='utf-8') as f:
-              f.write(data['html_outras'])
-
-          # Salva JSON público para uso via JavaScript
-          public_data = {
-              'penha_events_count': data['penha_events_count'],
-              'outras_events_count': data['outras_events_count'],
-              'total_events': data['total_events'],
-              'last_update': data['last_update'],
-              'generated_at': data['generated_at'],
-              'html_penha': data['html_penha'],
-              'html_outras': data['html_outras']
-          }
-
-          with open('events.json', 'w', encoding='utf-8') as f:
-              json.dump(public_data, f, indent=2, ensure_ascii=False)
-
-          print("✅ Arquivos HTML gerados com sucesso")
-          EOF
-
-      - name: "📋 Generate README"
-        run: |
-          cat > README.md << 'EOF'
-          # 🏛️ Eventos Sympla - Igreja da Penha
-
-          > Sistema automatizado de eventos do Curso Online para Pais e Padrinhos
-
-          ## 📊 Status Atual
-
-          - **Total de Eventos**: Atualizado automaticamente
-          - **Igreja da Penha**: Domingos às 15:00
-          - **Outras Igrejas**: Domingos às 14:00, Segunda/Quinta às 11:00
-          - **Última Atualização**: Via GitHub Actions
-
-          ## 🚀 URLs Disponíveis
-
-          - **Página Principal**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/
-          - **Igreja da Penha**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/penha.html
-          - **Outras Igrejas**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/outras.html
-          - **Dados JSON**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/events.json
-
-          ## 🔄 Atualizações Automáticas
-
-          - **Frequência**: A cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
-          - **Fonte**: API oficial do Sympla
-          - **Tecnologia**: GitHub Actions + Python
-          - **Status**: 100% independente - não depende de servidores externos
-
-          ## 💻 Uso no Wix
-
-          ### Embed Completo
-          ```html
-          <iframe src="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/" 
-                  width="100%" height="600" frameborder="0"></iframe>
-          ```
-
-          ### Igreja da Penha apenas
-          ```html
-          <iframe src="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/penha.html" 
-                  width="100%" height="400" frameborder="0"></iframe>
-          ```
-
-          ### Outras Igrejas apenas
-          ```html
-          <iframe src="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/outras.html" 
-                  width="100%" height="400" frameborder="0"></iframe>
-          ```
-
-          ---
-
-          ⚡ **Powered by GitHub Actions** | 🎨 **Design responsivo** | 📱 **Mobile-friendly**
-          EOF
-
-      - name: "🔍 Check for changes"
-        id: changes
-        run: |
-          # Configura git
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-
-          # Adiciona arquivos ao staging
-          git add index.html penha.html outras.html events.json README.md
-
-          # Verifica se há mudanças
-          if [ -n "$(git diff --cached)" ] || [ "${{ github.event.inputs.force_update }}" = "true" ]; then
-            echo "changes=true" >> "$GITHUB_OUTPUT"
-            echo "✅ Mudanças detectadas nos eventos"
-          else
-            echo "changes=false" >> "$GITHUB_OUTPUT"
-            echo "ℹ️ Nenhuma mudança detectada nos eventos"
-          fi
-
-      - name: "📤 Commit and push changes"
-        if: steps.changes.outputs.changes == 'true'
-        run: |
-          git commit -m "🔄 Atualização automática dos eventos - $(date '+%d/%m/%Y %H:%M UTC')"
-          git push
-          echo "✅ Eventos atualizados e publicados no GitHub Pages"
-
-          # Mostra resumo
-          echo "📊 Resumo da atualização:"
-          python - << 'PY'
-          import json
-          with open('events-data.json', encoding='utf-8') as f:
-              data = json.load(f)
-          print(f"• Total: {data['total_events']} eventos")
-          print(f"• Igreja da Penha: {data['penha_events_count']} eventos")
-          print(f"• Outras Igrejas: {data['outras_events_count']} eventos")
-          PY
-
-      - name: "📝 Create deployment summary"
-        if: steps.changes.outputs.changes == 'true'
-        run: |
-          echo "## 🎉 Eventos Atualizados com Sucesso" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          python - << 'PY' >> "$GITHUB_STEP_SUMMARY"
-          import json
-          with open('events-data.json', encoding='utf-8') as f:
-              data = json.load(f)
-          print(f"**📊 Total de eventos**: {data['total_events']}")
-          print(f"**🏛️ Igreja da Penha**: {data['penha_events_count']} eventos")
-          print(f"**⛪ Outras Igrejas**: {data['outras_events_count']} eventos")
-          print(f"**🕒 Atualização**: {data['generated_at']}")
-          print("")
-          print("**🔗 URLs disponíveis:**")
-          # As chaves abaixo são 4 chaves para escapar o template do GitHub no Markdown
-          print("- [Página Principal](https://{{{{ github.repository_owner }}}}.github.io/{{{{ github.event.repository.name }}}})")
-          print("- [Igreja da Penha](https://{{{{ github.repository_owner }}}}.github.io/{{{{ github.event.repository.name }}}}/penha.html)")
-          print("- [Outras Igrejas](https://{{{{ github.repository_owner }}}}.github.io/{{{{ github.event.repository.name }}}}/outras.html)")
-          PY
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+        
+    - name: 🔑 Verify Sympla API Key
+      env:
+        SYMPLA_API_KEY: ${{ secrets.SYMPLA_API_KEY }}
+      run: |
+        if [ -z "$SYMPLA_API_KEY" ]; then
+          echo "❌ SYMPLA_API_KEY não configurada!"
+          echo "👉 Vá em Settings > Secrets > Actions"
+          echo "👉 Adicione SYMPLA_API_KEY com sua chave da API Sympla"
+          exit 1
+        fi
+        echo "✅ SYMPLA_API_KEY encontrada"
+        
+    - name: 📡 Fetch events from Sympla API
+      env:
+        SYMPLA_API_KEY: ${{ secrets.SYMPLA_API_KEY }}
+      run: |
+        echo "🚀 Iniciando busca de eventos..."
+        python sympla_processor.py
+        
+        # Verifica se o arquivo foi gerado
+        if [ ! -f events-data.json ]; then
+          echo "❌ Falha ao gerar events-data.json"
+          exit 1
+        fi
+        
+        echo "✅ Eventos processados com sucesso"
+        
+        # Mostra estatísticas
+        echo "📊 Estatísticas dos eventos:"
+        python -c "
+        import json
+        with open('events-data.json') as f:
+            data = json.load(f)
+        print(f'• Total: {data[\"total_events\"]} eventos')
+        print(f'• Igreja da Penha: {data[\"penha_events_count\"]} eventos')  
+        print(f'• Outras Igrejas: {data[\"outras_events_count\"]} eventos')
+        print(f'• Cursos de Noivos: {data[\"noivos_events_count\"]} eventos')
+        print(f'• Última atualização: {data[\"generated_at\"]}')
+        "
+        
+    - name: 📄 Generate HTML files
+      run: |
+        echo "📝 Gerando arquivos HTML..."
+        
+        python << 'EOF'
+        import json
+        from datetime import datetime
+        
+        # Carrega dados dos eventos
+        with open('events-data.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # Template HTML principal com 3 seções
+        main_template = f"""<!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Eventos Sympla - Igreja da Penha</title>
+            <meta name="description" content="Cursos Online - Igreja da Penha">
+            <style>
+                body {{
+                    margin: 0;
+                    padding: 0;
+                    background: transparent;
+                    font-family: 'Montserrat', sans-serif;
+                }}
+                .container {{
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    text-align: center;
+                }}
+                .event-section {{
+                    margin-bottom: 40px;
+                    background: transparent;
+                }}
+                .section-title {{
+                    font-family: 'Montserrat', sans-serif;
+                    font-weight: 900;
+                    color: #003448;
+                    font-size: 24px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    margin-bottom: 30px;
+                    text-align: center;
+                }}
+                .info {{
+                    text-align: center;
+                    padding: 20px;
+                    background: rgba(248, 249, 250, 0.8);
+                    border-radius: 15px;
+                    color: #6b7280;
+                    font-size: 12px;
+                    font-family: 'Montserrat', sans-serif;
+                    margin-top: 30px;
+                }}
+                @media (max-width: 768px) {{
+                    .container {{ padding: 10px; }}
+                    .section-title {{ font-size: 20px; }}
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="event-section">
+                    <h2 class="section-title">🏛️ Igreja da Penha</h2>
+                    {data['html_penha']}
+                </div>
+                
+                <div class="event-section">
+                    <h2 class="section-title">⛪ Outras Igrejas</h2>
+                    {data['html_outras']}
+                </div>
+                
+                <div class="event-section">
+                    <h2 class="section-title">💒 Cursos de Noivos</h2>
+                    {data['html_noivos']}
+                </div>
+                
+                <div class="info">
+                    <p>📡 Atualizado automaticamente via GitHub Actions</p>
+                    <p>🔄 Última atualização: {data['generated_at']}</p>
+                    <p>📊 Pais/Padrinhos: {data['penha_events_count'] + data['outras_events_count']} • Noivos: {data['noivos_events_count']} • Total: {data['total_events']}</p>
+                </div>
+            </div>
+        </body>
+        </html>"""
+        
+        # Salva index.html principal
+        with open('index.html', 'w', encoding='utf-8') as f:
+            f.write(main_template)
+        
+        # Salva arquivos separados
+        with open('penha.html', 'w', encoding='utf-8') as f:
+            f.write(data['html_penha'])
+            
+        with open('outras.html', 'w', encoding='utf-8') as f:
+            f.write(data['html_outras'])
+            
+        with open('noivos.html', 'w', encoding='utf-8') as f:
+            f.write(data['html_noivos'])
+        
+        # Salva JSON público para uso via JavaScript
+        public_data = {{
+            'penha_events_count': data['penha_events_count'],
+            'outras_events_count': data['outras_events_count'],
+            'noivos_events_count': data['noivos_events_count'],
+            'total_events': data['total_events'],
+            'last_update': data['last_update'],
+            'generated_at': data['generated_at'],
+            'html_penha': data['html_penha'],
+            'html_outras': data['html_outras'],
+            'html_noivos': data['html_noivos']
+        }}
+        
+        with open('events.json', 'w', encoding='utf-8') as f:
+            json.dump(public_data, f, indent=2, ensure_ascii=False)
+        
+        print("✅ Arquivos HTML gerados com sucesso")
+        print(f"📄 index.html (página completa)")
+        print(f"📄 penha.html ({data['penha_events_count']} eventos)")
+        print(f"📄 outras.html ({data['outras_events_count']} eventos)") 
+        print(f"📄 noivos.html ({data['noivos_events_count']} eventos)")
+        print(f"📄 events.json (dados para JavaScript)")
+        EOF
+        
+    - name: 📋 Generate README
+      run: |
+        cat > README.md << 'EOF'
+        # 🏛️ Eventos Sympla - Igreja da Penha
+        
+        > Sistema automatizado com 3 tipos de cursos: Pais/Padrinhos + Noivos
+        
+        ## 📊 Status Atual
+        
+        - **Pais e Padrinhos - Igreja da Penha**: Domingos às 15:00
+        - **Pais e Padrinhos - Outras Igrejas**: Domingos às 14:00, Segunda/Quinta às 11:00
+        - **Cursos de Noivos**: Sábados às 14:00
+        - **Última Atualização**: Via GitHub Actions
+        
+        ## 🚀 URLs Disponíveis
+        
+        - **Página Completa**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/
+        - **Igreja da Penha**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/penha.html
+        - **Outras Igrejas**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/outras.html
+        - **Cursos de Noivos**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/noivos.html
+        - **Dados JSON**: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/events.json
+        
+        ## 💻 Uso no Wix
+        
+        ### Página Completa (3 seções)
+        ```html
+        <iframe src="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/" 
+                width="100%" height="900" frameborder="0"></iframe>
+        ```
+        
+        ### Igreja da Penha apenas
+        ```html
+        <iframe src="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/penha.html" 
+                width="100%" height="400" frameborder="0"></iframe>
+        ```
+        
+        ### Outras Igrejas apenas
+        ```html
+        <iframe src="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/outras.html" 
+                width="100%" height="400" frameborder="0"></iframe>
+        ```
+        
+        ### Cursos de Noivos apenas
+        ```html
+        <iframe src="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/noivos.html" 
+                width="100%" height="400" frameborder="0"></iframe>
+        ```
+        
+        ## 🔄 Atualizações Automáticas
+        
+        - **Frequência**: A cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
+        - **Fonte**: API oficial do Sympla
+        - **Tecnologia**: GitHub Actions + Python
+        - **Status**: 100% independente
+        
+        ---
+        
+        ⚡ **4 páginas HTML** | 🎨 **Design responsivo** | 📱 **Mobile-friendly**
+        EOF
+        
+    - name: 🔍 Check for changes
+      id: changes
+      run: |
+        # Configura git
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        
+        # Adiciona arquivos ao staging
+        git add index.html penha.html outras.html noivos.html events.json README.md
+        
+        # Verifica se há mudanças
+        if [ -n "$(git diff --cached)" ] || [ "${{ github.event.inputs.force_update }}" = "true" ]; then
+          echo "changes=true" >> $GITHUB_OUTPUT
+          echo "✅ Mudanças detectadas nos eventos"
+        else
+          echo "changes=false" >> $GITHUB_OUTPUT
+          echo "ℹ️ Nenhuma mudança detectada nos eventos"
+        fi
+        
+    - name: 📤 Commit and push changes
+      if: steps.changes.outputs.changes == 'true'
+      run: |
+        git commit -m "🔄 Atualização automática - $(date '+%d/%m/%Y %H:%M UTC')"
+        git push
+        echo "✅ Eventos atualizados e publicados no GitHub Pages"
+        
+        # Mostra resumo
+        echo "📊 Resumo da atualização:"
+        python -c "
+        import json
+        with open('events-data.json') as f:
+            data = json.load(f)
+        print(f'• Total: {data[\"total_events\"]} eventos')
+        print(f'• Igreja da Penha: {data[\"penha_events_count\"]} eventos')  
+        print(f'• Outras Igrejas: {data[\"outras_events_count\"]} eventos')
+        print(f'• Cursos de Noivos: {data[\"noivos_events_count\"]} eventos')
+        "
+        
+    - name: 📝 Create deployment summary
+      if: steps.changes.outputs.changes == 'true'
+      run: |
+        echo "## 🎉 Eventos Atualizados com Sucesso" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        python -c "
+        import json
+        with open('events-data.json') as f:
+            data = json.load(f)
+        print(f'**📊 Total de eventos**: {data[\"total_events\"]}')
+        print(f'**🏛️ Igreja da Penha**: {data[\"penha_events_count\"]} eventos')
+        print(f'**⛪ Outras Igrejas**: {data[\"outras_events_count\"]} eventos')
+        print(f'**💒 Cursos de Noivos**: {data[\"noivos_events_count\"]} eventos')
+        print(f'**🕒 Atualização**: {data[\"generated_at\"]}')
+        print('')
+        print('**🔗 URLs disponíveis:**')
+        print('- [Página Completa](https://{{{{ github.repository_owner }}}}.github.io/{{{{ github.event.repository.name }}}})')
+        print('- [Igreja da Penha](https://{{{{ github.repository_owner }}}}.github.io/{{{{ github.event.repository.name }}}}/penha.html)')
+        print('- [Outras Igrejas](https://{{{{ github.repository_owner }}}}.github.io/{{{{ github.event.repository.name }}}}/outras.html)')
+        print('- [Cursos de Noivos](https://{{{{ github.repository_owner }}}}.github.io/{{{{ github.event.repository.name }}}}/noivos.html)')
+        " >> $GITHUB_STEP_SUMMARY
