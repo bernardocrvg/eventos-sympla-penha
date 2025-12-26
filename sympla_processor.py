@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Processador de Eventos Sympla 100% Independente - VERSÃO CORRIGIDA
+Processador de Eventos Sympla 100% Independente - VERSÃO FINAL RESPONSIVA
 Roda no GitHub Actions sem depender de nenhum servidor externo
-CORREÇÃO: Filtra apenas "Curso Online de Pais e Padrinhos", exclui "Curso de Noivos"
+CORREÇÃO: Filtra 3 tipos de cursos + CSS SUPER RESPONSIVO para mobile (até 280px)
 """
 
 import os
@@ -231,9 +231,9 @@ class SymplaProcessor:
         return processed_events
     
     def generate_html(self, penha_events: List[Dict], outras_events: List[Dict], noivos_events: List[Dict]) -> tuple:
-        """Gera HTML estático e dinâmico com design aplicado"""
+        """Gera HTML estático e dinâmico com design aplicado - SUPER RESPONSIVO"""
         
-        # CSS comum com design final
+        # CSS comum com design final - SUPER RESPONSIVO
         common_css = '''
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap');
         
@@ -250,21 +250,22 @@ class SymplaProcessor:
         }
         
         .month-section { 
-            margin-bottom: 25px; 
+            margin-bottom: 20px; 
             background: transparent;
-            padding: 15px 10px;
+            padding: 10px 5px;
         }
         
         .month-section h2 { 
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
             color: #003448;
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 12px;
+            font-size: 16px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-align: center;
             padding: 0;
+            line-height: 1.2;
         }
         
         .event-button {
@@ -273,62 +274,171 @@ class SymplaProcessor:
             color: #003448;
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 14px;
-            padding: 12px 20px;
-            margin: 6px 8px 6px 0;
+            font-size: 12px;
+            padding: 8px 12px;
+            margin: 3px 4px;
             text-decoration: none;
-            border-radius: 25px;
+            border-radius: 20px;
             border: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             text-align: center;
-            line-height: 1.2;
+            line-height: 1.1;
+            max-width: 100%;
+            word-wrap: break-word;
+            white-space: nowrap;
         }
         
         .event-button:hover {
             background: linear-gradient(145deg, #a2d2ff 0%, #7cc7ff 100%);
             color: #003448;
             text-decoration: none;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .update-info {
-            margin-top: 20px; 
-            padding: 10px 15px; 
+            margin-top: 15px; 
+            padding: 8px 10px; 
             background: rgba(248, 249, 250, 0.8);
-            border-radius: 15px; 
+            border-radius: 12px; 
             text-align: center; 
             color: #6b7280; 
-            font-size: 11px;
+            font-size: 10px;
             font-family: 'Montserrat', sans-serif;
             font-weight: 400;
             border: 1px solid rgba(226, 232, 240, 0.5);
+            line-height: 1.2;
         }
         
+        /* Tablets e telas médias */
         @media (max-width: 768px) {
+            .event-container {
+                padding: 0 3px;
+            }
+            
+            .event-button {
+                font-size: 11px;
+                padding: 7px 10px;
+                margin: 2px 3px;
+                border-radius: 18px;
+            }
+            
+            .month-section {
+                padding: 8px 3px;
+                margin-bottom: 15px;
+            }
+            
+            .month-section h2 {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* Mobile padrão */
+        @media (max-width: 480px) {
+            .event-container {
+                padding: 0 2px;
+            }
+            
             .event-button {
                 display: block;
-                width: calc(100% - 16px);
-                margin: 6px 8px;
-                text-align: center;
+                width: calc(100% - 8px);
+                margin: 2px 4px;
+                padding: 6px 8px;
+                font-size: 10px;
+                border-radius: 15px;
+                white-space: normal;
+                word-wrap: break-word;
             }
+            
             .month-section h2 {
-                font-size: 16px;
+                font-size: 13px;
+                margin-bottom: 8px;
+            }
+            
+            .month-section {
+                padding: 6px 2px;
+                margin-bottom: 12px;
+            }
+            
+            .update-info {
+                font-size: 9px;
+                padding: 6px 8px;
+                margin-top: 10px;
             }
         }
         
-        @media (max-width: 480px) {
-            .event-button {
-                width: calc(100% - 8px);
-                margin: 4px 4px;
-                padding: 10px 15px;
-                font-size: 13px;
+        /* Telas muito pequenas - 320px e menor */
+        @media (max-width: 320px) {
+            .event-container {
+                padding: 0 1px;
             }
+            
+            .event-button {
+                width: calc(100% - 4px);
+                margin: 1px 2px;
+                padding: 5px 6px;
+                font-size: 9px;
+                border-radius: 12px;
+                line-height: 1.1;
+            }
+            
             .month-section h2 {
-                font-size: 15px;
+                font-size: 12px;
+                margin-bottom: 6px;
+                letter-spacing: 0.3px;
+            }
+            
+            .month-section {
+                padding: 4px 1px;
+                margin-bottom: 10px;
+            }
+            
+            .update-info {
+                font-size: 8px;
+                padding: 4px 6px;
+                margin-top: 8px;
+                line-height: 1.1;
+            }
+        }
+        
+        /* Telas extra pequenas - 280px (como mencionado pelo usuário) */
+        @media (max-width: 280px) {
+            .event-container {
+                padding: 0;
+                font-size: 8px;
+            }
+            
+            .event-button {
+                width: calc(100% - 2px);
+                margin: 1px 1px;
+                padding: 4px 4px;
+                font-size: 8px;
+                border-radius: 10px;
+                line-height: 1.0;
+                font-weight: 600;
+            }
+            
+            .month-section h2 {
+                font-size: 10px;
+                margin-bottom: 4px;
+                letter-spacing: 0.2px;
+                font-weight: 800;
+            }
+            
+            .month-section {
+                padding: 3px 0;
+                margin-bottom: 8px;
+            }
+            
+            .update-info {
+                font-size: 7px;
+                padding: 3px 4px;
+                margin-top: 6px;
+                line-height: 1.0;
             }
         }
         '''
@@ -354,7 +464,7 @@ class SymplaProcessor:
         def generate_buttons_html(events_by_month):
             """Gera HTML dos botões organizados por mês"""
             if not events_by_month:
-                return '<div style="text-align: center; padding: 40px; color: #666;"><p>Nenhum evento disponível no momento.</p></div>'
+                return '<div style="text-align: center; padding: 20px; color: #666;"><p style="font-size: 12px; margin: 0;">Nenhum evento disponível no momento.</p></div>'
             
             html = ''
             # Ordena meses cronologicamente
