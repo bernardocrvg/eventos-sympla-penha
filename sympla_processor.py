@@ -336,7 +336,7 @@ class SymplaProcessor:
             }
         }
         
-        /* Mobile padrão - BOTÕES 50PX ALTURA + 10PX ESPAÇAMENTO */
+        /* Mobile padrão - BOTÕES 25PX ALTURA + 5PX ESPAÇAMENTO */
         @media (max-width: 480px) {
             .event-container {
                 padding: 0 5px;
@@ -345,9 +345,9 @@ class SymplaProcessor:
             .event-button {
                 display: block;
                 width: calc(100% - 10px);
-                min-height: 50px;
-                margin: 10px 5px;
-                padding: 12px 8px;
+                min-height: 25px;
+                margin: 5px 5px;
+                padding: 6px 8px;
                 font-size: 11px;
                 border-radius: 15px;
                 white-space: normal;
@@ -360,18 +360,18 @@ class SymplaProcessor:
             
             .month-section h2 {
                 font-size: 14px;
-                margin-bottom: 15px;
+                margin-bottom: 10px;
             }
             
             .month-section {
-                padding: 10px 5px;
-                margin-bottom: 20px;
+                padding: 8px 5px;
+                margin-bottom: 15px;
             }
             
             .update-info {
                 font-size: 9px;
-                padding: 8px 10px;
-                margin-top: 15px;
+                padding: 6px 8px;
+                margin-top: 10px;
             }
         }
         
@@ -383,9 +383,9 @@ class SymplaProcessor:
             
             .event-button {
                 width: calc(100% - 10px);
-                min-height: 50px;
-                margin: 10px 5px;
-                padding: 12px 6px;
+                min-height: 25px;
+                margin: 5px 5px;
+                padding: 6px 6px;
                 font-size: 10px;
                 border-radius: 12px;
                 line-height: 1.2;
@@ -397,19 +397,19 @@ class SymplaProcessor:
             
             .month-section h2 {
                 font-size: 13px;
-                margin-bottom: 12px;
+                margin-bottom: 8px;
                 letter-spacing: 0.3px;
             }
             
             .month-section {
-                padding: 8px 5px;
-                margin-bottom: 15px;
+                padding: 6px 5px;
+                margin-bottom: 12px;
             }
             
             .update-info {
                 font-size: 8px;
-                padding: 6px 8px;
-                margin-top: 12px;
+                padding: 5px 6px;
+                margin-top: 8px;
                 line-height: 1.2;
             }
         }
@@ -417,15 +417,15 @@ class SymplaProcessor:
         /* Telas extra pequenas - 280px */
         @media (max-width: 280px) {
             .event-container {
-                padding: 0 5px;
+                padding: 0 3px;
                 font-size: 9px;
             }
             
             .event-button {
-                width: calc(100% - 10px);
-                min-height: 50px;
-                margin: 10px 5px;
-                padding: 12px 5px;
+                width: calc(100% - 6px);
+                min-height: 25px;
+                margin: 5px 3px;
+                padding: 6px 4px;
                 font-size: 9px;
                 border-radius: 10px;
                 line-height: 1.1;
@@ -438,20 +438,20 @@ class SymplaProcessor:
             
             .month-section h2 {
                 font-size: 12px;
-                margin-bottom: 10px;
+                margin-bottom: 6px;
                 letter-spacing: 0.2px;
                 font-weight: 800;
             }
             
             .month-section {
-                padding: 8px 5px;
-                margin-bottom: 15px;
+                padding: 6px 3px;
+                margin-bottom: 10px;
             }
             
             .update-info {
                 font-size: 8px;
-                padding: 5px 6px;
-                margin-top: 10px;
+                padding: 4px 5px;
+                margin-top: 8px;
                 line-height: 1.1;
             }
         }
