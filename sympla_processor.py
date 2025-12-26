@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Processador de Eventos Sympla 100% Independente - VERSÃO FINAL RESPONSIVA
-Roda no GitHub Actions sem depender de nenhum servidor externo
-CORREÇÃO: Filtra 3 tipos de cursos + CSS SUPER RESPONSIVO para mobile (até 280px)
+Processador de Eventos Sympla - VERSÃO FINAL COM MOBILE OTIMIZADO
+Botões com altura de 50px e espaçamento de 10px em mobile
 """
 
 import os
@@ -231,9 +230,9 @@ class SymplaProcessor:
         return processed_events
     
     def generate_html(self, penha_events: List[Dict], outras_events: List[Dict], noivos_events: List[Dict]) -> tuple:
-        """Gera HTML estático e dinâmico com design aplicado - SUPER RESPONSIVO"""
+        """Gera HTML estático e dinâmico com design aplicado - MOBILE OTIMIZADO"""
         
-        # CSS comum com design final - SUPER RESPONSIVO
+        # CSS comum com design final - MOBILE OTIMIZADO (50px altura + 10px espaçamento)
         common_css = '''
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap');
         
@@ -337,108 +336,123 @@ class SymplaProcessor:
             }
         }
         
-        /* Mobile padrão */
+        /* Mobile padrão - BOTÕES 50PX ALTURA + 10PX ESPAÇAMENTO */
         @media (max-width: 480px) {
             .event-container {
-                padding: 0 2px;
+                padding: 0 5px;
             }
             
             .event-button {
                 display: block;
-                width: calc(100% - 8px);
-                margin: 2px 4px;
-                padding: 6px 8px;
-                font-size: 10px;
+                width: calc(100% - 10px);
+                min-height: 50px;
+                margin: 10px 5px;
+                padding: 12px 8px;
+                font-size: 11px;
                 border-radius: 15px;
                 white-space: normal;
                 word-wrap: break-word;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
             }
             
             .month-section h2 {
-                font-size: 13px;
-                margin-bottom: 8px;
+                font-size: 14px;
+                margin-bottom: 15px;
             }
             
             .month-section {
-                padding: 6px 2px;
-                margin-bottom: 12px;
+                padding: 10px 5px;
+                margin-bottom: 20px;
             }
             
             .update-info {
                 font-size: 9px;
-                padding: 6px 8px;
-                margin-top: 10px;
+                padding: 8px 10px;
+                margin-top: 15px;
             }
         }
         
         /* Telas muito pequenas - 320px e menor */
         @media (max-width: 320px) {
             .event-container {
-                padding: 0 1px;
+                padding: 0 5px;
             }
             
             .event-button {
-                width: calc(100% - 4px);
-                margin: 1px 2px;
-                padding: 5px 6px;
-                font-size: 9px;
+                width: calc(100% - 10px);
+                min-height: 50px;
+                margin: 10px 5px;
+                padding: 12px 6px;
+                font-size: 10px;
                 border-radius: 12px;
-                line-height: 1.1;
+                line-height: 1.2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
             }
             
             .month-section h2 {
-                font-size: 12px;
-                margin-bottom: 6px;
+                font-size: 13px;
+                margin-bottom: 12px;
                 letter-spacing: 0.3px;
             }
             
             .month-section {
-                padding: 4px 1px;
-                margin-bottom: 10px;
+                padding: 8px 5px;
+                margin-bottom: 15px;
             }
             
             .update-info {
                 font-size: 8px;
-                padding: 4px 6px;
-                margin-top: 8px;
-                line-height: 1.1;
+                padding: 6px 8px;
+                margin-top: 12px;
+                line-height: 1.2;
             }
         }
         
-        /* Telas extra pequenas - 280px (como mencionado pelo usuário) */
+        /* Telas extra pequenas - 280px */
         @media (max-width: 280px) {
             .event-container {
-                padding: 0;
-                font-size: 8px;
+                padding: 0 5px;
+                font-size: 9px;
             }
             
             .event-button {
-                width: calc(100% - 2px);
-                margin: 1px 1px;
-                padding: 4px 4px;
-                font-size: 8px;
+                width: calc(100% - 10px);
+                min-height: 50px;
+                margin: 10px 5px;
+                padding: 12px 5px;
+                font-size: 9px;
                 border-radius: 10px;
-                line-height: 1.0;
+                line-height: 1.1;
                 font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
             }
             
             .month-section h2 {
-                font-size: 10px;
-                margin-bottom: 4px;
+                font-size: 12px;
+                margin-bottom: 10px;
                 letter-spacing: 0.2px;
                 font-weight: 800;
             }
             
             .month-section {
-                padding: 3px 0;
-                margin-bottom: 8px;
+                padding: 8px 5px;
+                margin-bottom: 15px;
             }
             
             .update-info {
-                font-size: 7px;
-                padding: 3px 4px;
-                margin-top: 6px;
-                line-height: 1.0;
+                font-size: 8px;
+                padding: 5px 6px;
+                margin-top: 10px;
+                line-height: 1.1;
             }
         }
         '''
